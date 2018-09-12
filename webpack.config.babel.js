@@ -1,3 +1,4 @@
+import "@babel/polyfill";
 import nodeExternals from "webpack-node-externals";
 import NodemonPlugin from "nodemon-webpack-plugin";
 import path from "path";
@@ -8,7 +9,7 @@ delete process.env.BABEL_ENV;
 
 export default {
   mode: isDev ? "development" : "production",
-  entry: "./src/index.js",
+  entry: ["@babel/polyfill", "./src/index.js"],
   target: "node",
   node: {
     __filename: true,
@@ -22,17 +23,25 @@ export default {
     publicPath: path.resolve("./dist"),
   },
   module: {
-    rules: [
-      {
-        enforce: "pre",
-        test: /\.js$/,
-        exclude: /node_modules/,
-        loader: "eslint-loader",
-        options: {
-          fix: true,
-        },
-      },
-    ],
+    rules: isDev
+      ? [
+          {
+            enforce: "pre",
+            test: /\.js$/,
+            exclude: /node_modules/,
+            loader: "eslint-loader",
+            options: {
+              fix: true,
+            },
+          },
+        ]
+      : [],
+  },
+  resolve: {
+    alias: {
+      "@": path.join(__dirname, "src"),
+      "@@": __dirname,
+    },
   },
   plugins: [
     new NodemonPlugin({
