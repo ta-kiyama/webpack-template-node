@@ -1,0 +1,9 @@
+# gitignore file
+.gitignore
+
+# dist folder
+dist
+
+# include rc files
+!.eslintrc.js
+!.babelrc.js
